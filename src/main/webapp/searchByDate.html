@@ -14,20 +14,20 @@ table, th, td {
 <body>
 	<h1>Schedule Event!</h1>
 	<nav>
-	<a href="index.html">Home</a>
-	<a href="eventCreate.html">Create Event</a>
-	<a href="searchByMail.html">Search Event by mail</a>
-	<a href="searchByDate.html">Search Event by date</a>
+		<a href="index.html">Home</a> 
+		<a href="eventCreate.html">Create Event</a>
+		<a href="searchByMail.html">Search Event by mail</a>
+		<a href="searchByDate.html">Search Event by date</a>
 	</nav>
 	<br>
+	<h4>Search Event</h4>
+	<label for="eventDate">Select date:</label>
+	<input type="date" id="eventDate" name="eventDate">
+	<button type="button" id="getEventsByDate">Enter date</button>
 	<br>
-	
-	<table id="events"></table>
 	<br>
-	<br>
-	<br>
-	<br><br>
-	
+	<table id="dateEvent"></table>
+
 	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 	<script src="myscript.js"></script>
 </body>

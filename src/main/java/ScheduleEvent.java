@@ -75,7 +75,7 @@ public class ScheduleEvent extends HttpServlet {
 	public void doDelete(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		try {
 			eventService.removeEvent((request.getParameter("id")));
-			response.setContentType("application/json");
+			response.setContentType("text/plain");
 			response.setCharacterEncoding("UTF-8");
 			response.getWriter().print("Deleted");
 
