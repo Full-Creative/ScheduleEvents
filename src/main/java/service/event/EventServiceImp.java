@@ -52,19 +52,16 @@ public class EventServiceImp implements EventService {
 		eventDB.deleteEvent(id);
 	}
 
-	public ParticipantDetails addParticipant(ParticipantDetails participant) throws EntityNotFoundException {
+	public ParticipantDetails addParticipant(ParticipantDetails participant) throws EntityNotFoundException, DataBaseException {
 		if (participant == null || participant.getEmail() == null)
 			throw new IllegalArgumentException("Participant Details not available");
 		if (retrieveById(participant.getEventID()) == null || participant.getEventID() == null)
 			throw new IllegalArgumentException("No such event");
 		boolean isInserted = false;
-		try {
 			isInserted = eventDB.addParticipant(participant);
 			if (!isInserted)
 				throw new DataBaseException("Not inserted");
-		} catch (DataBaseException e) {
-			System.out.println(e.getMessage());
-		}
+		
 		return participant;
 
 	}

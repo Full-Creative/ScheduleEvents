@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.datastore.EntityNotFoundException;
 
+import datastore.DataBaseException;
 import helper.SerializerHelper;
 import model.ParticipantDetails;
 import service.event.EventServiceImp;
@@ -33,9 +34,13 @@ public class ParticipantAddition extends HttpServlet {
 			response.setCharacterEncoding("UTF-8");
 			response.getWriter().print("Inserted participant");
 		} catch (EntityNotFoundException e) {
+			//response.getWriter().print("Failed participant");
 			System.out.println("Event not available");
 		}
 		// doGet(request, response);
+		catch (DataBaseException e) {
+			response.sendError(501, "Participant does not exist. Please Create");
+		}
 	}
 
 }

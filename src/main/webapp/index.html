@@ -14,6 +14,7 @@
 		<a href="eventCreate.html">Create Event</a>
 		<a href="searchByMail.html">Search Event by mail</a>
 		<a	href="searchByDate.html">Search Event by date</a>
+		<a href="searchByTimeRange.html">Search by time range</a>
 	</nav>
 	<br>
 	<br>
@@ -32,7 +33,7 @@
 		</div>
 
 	</div>-->
-	<div id="myModal" class="modal">
+	<div id="updateModal" class="modal">
 		<div class="modal-content">
 			<span class="close">&times;</span> 
 			Event Title: <input type="text"	id="eventTitle"></input> <br><br>
@@ -40,6 +41,15 @@
 			<br><br>
 			Event Time: <input type="datetime-local" id="eventTime"></input><br><br>
 			<button type="button" id="update">Update</button>
+		</div>
+	</div>
+	<div id="participantModal" class="modal">
+		<div class="modal-content">
+			<span class="close">&times;</span> 
+			<!-- Participant Name: <input type="text" id="name"></input> <br><br>-->
+			Participant Email: <input type="text" id="email"></input> <br><br>		
+		<!-- Participant Time Zone: <select id="timezone" name="timezone"></select>--><br><br>
+			<button type="button" id="addParticipant">Add</button>
 		</div>
 	</div>
 	<br>

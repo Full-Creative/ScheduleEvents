@@ -28,9 +28,13 @@ public class ParticipantCreation extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		SerializerHelper serializer = new SerializerHelper();
+		try {
 		ParticipantDetails participant = serializer.bufferedReaderToParticipantObject(request.getReader());
 		participantService.createParticipant(participant);
-
+		}catch (IllegalArgumentException e) {
+			System.out.println(e.getMessage());
+		}
+		
 		// doGet(request, response);
 	}
 

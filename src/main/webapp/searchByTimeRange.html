@@ -17,14 +17,15 @@
 		<a href="searchByTimeRange.html">Search by time range</a>
 	</nav>
 	<br>
-	<h4>Search Event</h4>
-	<label for="eventDate">Select date:</label>
-	<input type="date" id="eventDate" name="eventDate">
-	<button type="button" id="getEventsByDate">Enter date</button>
+	<h4>Search Event by time range</h4>
+	<label for="start">Start</label>
+	<input type="datetime-local" id="start" name="start">
+	<label for="end">End</label>
+	<input type="datetime-local" id="end" name="end">
+	<button type="button" id="getEventsByTimeRange">Select</button>
 	<br>
 	<br>
 	<table id="participantEvent"></table>
-	<script src="https://MomentJS.com/downloads/moment.js"></script> 
 	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 	<script src="myscript.js"></script>
 </body>

@@ -9,12 +9,30 @@ $("table").on("click", ".delete", function() {
 	deleteEvent(this.id);
 });
 $("table").on("click", ".participant", function() {
-	addEventParticipant(this.id);
+	var modal = document.getElementById("participantModal");
+	var span = document.getElementsByClassName("close")[1];
+	var addBtn = document.getElementById("addParticipant");
+	var eventID = this.id;
+	modal.style.display = "block";
+	// When the user clicks on <span> (x), close the modal
+	span.onclick = function() {
+		modal.style.display = "none";
+	}
+	// When the user clicks anywhere outside of the modal, close it
+	window.onclick = function(event) {
+		if (event.target == modal) {
+			modal.style.display = "none";
+		}
+	}
+
+	addBtn.onclick = function() {
+		addEventParticipant(eventID);
+	}
+
 });
 
 $("table").on("click", ".updateBtn", function() {
-
-	var modal = document.getElementById("myModal");
+	var modal = document.getElementById("updateModal");
 	var span = document.getElementsByClassName("close")[0];
 	var updateBtn = document.getElementById("update");
 	var eventID = this.parentElement.parentElement.cells[0].innerHTML;
@@ -33,9 +51,6 @@ $("table").on("click", ".updateBtn", function() {
 		updateEvent(eventID);
 	}
 	populateForm(this);
-
-
-
 	//this.parentElement.parentElement.setAttribute('contenteditable', true);
 
 });
@@ -43,7 +58,7 @@ $("table").on("click", ".updateBtn", function() {
 function populateForm(e) {
 	document.getElementById('eventTitle').value = e.parentElement.parentElement.cells[1].innerText;
 	var d = parseInt(e.parentElement.parentElement.cells[3].innerText);
-	document.getElementById('eventTime').value = moment(d).format('YYYY-MM-DDThh:mm'); //yyyy-MM-ddThh:mm
+	document.getElementById('eventTime').value = moment(d).format('YYYY-MM-DDTHH:mm'); //yyyy-MM-ddThh:mm
 	//document.getElementById('eventDuration').value = e.parentElement.parentElement.cells[2].innerText;
 	// $("#duration").val(e.parentElement.parentElement.cells[2].innerText).attr("selected","selected");
 	document.getElementById('duration').selectedIndex = e.parentElement.parentElement.cells[2].innerText / 15 - 1;
@@ -117,35 +132,37 @@ function deleteEvent(eventID) {
 		}
 	});
 };
-/*
+
 function addEventParticipant(eventID) {
-	var id = eventID;
 	var obj = {
-		'eventTitle': id,
-		'email': new Date($('#eventtime').val()).getTime(),
-		'eventDuration': $('#duration').val()
+		'eventID': eventID,
+		'email': $('#email').val()
 	};
 	//	var id = $('input[type=radio][name=radioChoose]:checked').attr('id');
 	$.ajax({
 		type: "POST",
 		url: "event/participant",
 		contentType: "application/json",
+		data: JSON.stringify(obj),
 		success: function(response) {
 			alert(response);
 			getEvents();
+		},
+		error: function(xhr, status, error) {
+			alert(error);
 		}
 	});
-};*/
+};
 
 function printParticipantEvents(response) {
-	var result = '<tr><td>Event Title</td><td>Event Duration</td><td>Event Start Time</td><td>Event Created Time</td><td>Participant Key</td></tr>';
+	var result = '<tr><td>Event Title</td><td>Event Duration</td><td>Event Start Time</td><td>Event Created Time</td><td>Participant Email</td></tr>';
 	for (var i = 0; i < response.length; i++) {
 		result += ('<tr>' +
 			'<td>' + response[i].eventTitle + '</td>' +
 			'<td>' + response[i].eventDuration / 60000 + 'min</td>' +
 			'<td>' + new Date(response[i].eventTime).toUTCString() + '<br><br>' + new Date(response[i].eventTime).toLocaleString() + '</td>' +
 			'<td>' + new Date(response[i].eventCreatedTime).toUTCString() + '<br><br>' + new Date(response[i].eventCreatedTime).toLocaleString() + '</td>' +
-			'<td>' + ((response[i].participantKey != null) ? response[i].participantKey : 'no participant') + '</td>' +
+			'<td>' + ((response[i].participantEmail != null) ? response[i].participantEmail : 'no participant') + '</td>' +
 			+ '</tr>');
 	}
 
@@ -153,7 +170,7 @@ function printParticipantEvents(response) {
 
 }
 function printEvents(response) {
-	var result = '<tr><td>Event Title</td><td>Event Duration in minutes</td><td>Event Start Time</td><td>Event Created Time</td><td>Participant Key</td><td>Update</td><td>Select</td><td></td></tr>';
+	var result = '<tr><td>Event Title</td><td>Event Duration in minutes</td><td>Event Start Time</td><td>Event Created Time</td><td>Email</td><td>Participant Key</td><td>Update</td><td>Select</td><td></td></tr>';
 	for (var i = 0; i < response.length; i++) {
 		result += ('<tr>' +
 			'<td style="display:none">' + response[i].eventID + '</td>' +
@@ -163,7 +180,9 @@ function printEvents(response) {
 			'<td>' + new Date(response[i].eventTime).toUTCString() + '<br><br>' + new Date(response[i].eventTime).toLocaleString() + '</td>' +
 
 			'<td>' + new Date(response[i].eventCreatedTime).toUTCString() + '<br><br>' + new Date(response[i].eventCreatedTime).toLocaleString() + '</td>' +
+			'<td>' + ((response[i].participantEmail != null) ? response[i].participantEmail : 'no participant') + '</td>' +
 			'<td>' + ((response[i].participantKey != null) ? response[i].participantKey : 'no participant') + '</td>' +
+
 			//	'<td>' + '<input type="radio" id=' + response[i].eventID + ' name="radioChoose"></input>' + '</td>'
 			'<td><button class="updateBtn">Update</button></td>' +
 			//'<td>' + '<button type="button" id=' + response[i].eventID + ' class="update">Update</button>' + '</td>' +
@@ -189,14 +208,25 @@ function submitEvent() {
 		url: "event",
 		contentType: "application/json",
 		data: JSON.stringify(obj),
-		success: function(response) {			
+		success: function(response) {
 			alert(response);
 			//printEvents(response);
 		}
 
 	});
 };
+function getEventsByTimeRange() {
+	var start = new Date($('#start').val()).getTime();
+	var end = new Date($('#end').val()).getTime();
+	$.ajax({
+		type: "GET",
+		url: "TimeRange?start=" + start + "&end=" + end,
+		contentType: "application/json",
+		//	data: JSON.stringify(obj),
+		success: printParticipantEvents
 
+	});
+}
 function init() {
 	$('#getEventsByMail').click(function() {
 		getEventsByMail();
@@ -206,6 +236,9 @@ function init() {
 	});
 	$('#date').click(function() {
 		submit();
+	});
+	$('#getEventsByTimeRange').click(function() {
+		getEventsByTimeRange();
 	});
 	$('#getEventsByDate').click(function() {
 		getEventsByDate();

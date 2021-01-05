@@ -13,6 +13,8 @@ public class Event {
 	private long eventCreatedTime;
 	private long eventDuration;
 	private Set<String> participantKey;
+	private Set<String> participantEmail;
+	
 	//private Set<ParticipantDetails> participants;
 
 	public long getEventTime() {
@@ -39,15 +41,25 @@ public class Event {
 		this.eventDuration = eventDuration;
 	}
 
-	public Set<String> getParticipantEmail() {
+	public Set<String> getParticipantKey() {
 		return participantKey;
 	}
 
-	public void setParticipantEmail(Set<String> email) {
+	public void setParticipantKey(Set<String> key) {
 		if (this.participantKey != null)
-			this.participantKey.addAll(email);
+			this.participantKey.addAll(key);
 		else
-			this.participantKey = email;
+			this.participantKey = key;
+	}
+	public Set<String> getParticipantMail() {
+		return participantEmail;
+	}
+
+	public void setParticipantMail(Set<String> email) {
+		if (this.participantEmail != null)
+			this.participantEmail.addAll(email);
+		else
+			this.participantEmail = email;
 	}
 
 	public String getEventTitle() {

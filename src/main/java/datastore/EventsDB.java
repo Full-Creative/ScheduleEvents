@@ -39,9 +39,10 @@ import helper.SerializerHelper;
 public class EventsDB {
 	private DatastoreService datastore;
 	SerializerHelper serializer;
+
 	public EventsDB() {
 		datastore = DatastoreServiceFactory.getDatastoreService();
-		 serializer = new SerializerHelper();
+		serializer = new SerializerHelper();
 	}
 
 	public Event getEvent(String id) throws EntityNotFoundException {
@@ -117,6 +118,7 @@ public class EventsDB {
 	public boolean addParticipant(ParticipantDetails participant) {
 
 		List<String> participantIDinEvent = new ArrayList<String>();
+		// List<String> participantEmailinEvent = new ArrayList<String>();
 		try {
 			DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 			Filter ids = new Query.FilterPredicate("ParticipantEmail", FilterOperator.EQUAL, participant.getEmail());
@@ -132,21 +134,24 @@ public class EventsDB {
 			q = new Query("Event").setFilter(event);
 			pq = datastore.prepare(q);
 			Entity eventEntity = pq.asSingleEntity();
-			if ( eventEntity.getProperty("ParticipantKey")!=null) {			
-				participantIDinEvent= (List<String>) serializer.propertyToObject(eventEntity.getProperty("ParticipantKey").toString(), ArrayList.class);
-			//	participantIDinEvent = new Gson().fromJson(eventEntity.getProperty("ParticipantKey").toString(), List.class);
+			if (eventEntity.getProperty("ParticipantKey") != null && eventEntity.getProperty("Email") != null) {
+				participantIDinEvent = (List<String>) serializer.propertyToObject(eventEntity.getProperty("ParticipantKey").toString(), ArrayList.class);
+
+				// participantIDinEvent = new
+				// Gson().fromJson(eventEntity.getProperty("ParticipantKey").toString(),
+				// List.class);
 			}
 
 			if (!participantIDinEvent.contains(participantID))
 				participantIDinEvent.add(participantID);
-
 			eventEntity.setProperty("ParticipantKey", participantIDinEvent);
 			datastore.put(eventEntity);
 
 		} catch (EntityNotFoundException e) {
-			createParticipant(participant);
-			addParticipant(participant);
-			e.printStackTrace();
+			return false;
+			// createParticipant(participant);
+			// addParticipant(participant);
+			// e.printStackTrace();
 		}
 		return true;
 	}
@@ -188,16 +193,19 @@ public class EventsDB {
 	public Event entityToObject(Entity entity) {
 
 		Event event = new Event();
+
 		event.setEventID((String) entity.getProperty("EventID"));
 		event.setEventTitle(String.valueOf(entity.getProperty("EventTitle")));
 		event.setEventDuration((long) entity.getProperty("EventDuration"));
 		event.setEventCreatedTime((long) entity.getProperty("EventCreatedTime"));
 		event.setEventTime((long) entity.getProperty("EventTime"));
+
+		Set<String> keySet = new HashSet<String>();
 		if (entity.getProperty("ParticipantKey") != null) {
-		//	Set<String> ar = new Gson().fromJson(entity.getProperty("ParticipantKey").toString(), HashSet.class);
-			Set<String> ar= (Set<String>) serializer.propertyToObject(entity.getProperty("ParticipantKey").toString(), HashSet.class);
-			event.setParticipantEmail(ar);
+			keySet = (Set<String>) serializer.propertyToObject(entity.getProperty("ParticipantKey").toString(),HashSet.class);
+			event.setParticipantKey(keySet);
 		}
+		event.setParticipantMail(retrieveEmailByKey(keySet));
 		return event;
 	}
 
@@ -251,7 +259,7 @@ public class EventsDB {
 		List<Event> events = retrieveByDate(date);
 		Collections.sort(events, new Comparator<Event>() {
 			public int compare(Event s1, Event s2) {
-				return s2.getParticipantEmail().size() - s1.getParticipantEmail().size();
+				return s2.getParticipantKey().size() - s1.getParticipantKey().size();
 			}
 		});
 
@@ -288,24 +296,38 @@ public class EventsDB {
 		return events;
 	}
 
+	public Set<String> retrieveEmailByKey(Set<String> participantID) {
+		Set<String> email = new HashSet<String>();
+		Query participantQuery = new Query("Participant");
+		for (String key : participantID) {
+			Filter participantEmailFilter = new Query.FilterPredicate("ParticipantID", FilterOperator.EQUAL, key);
+			participantQuery.setFilter(participantEmailFilter);
+			PreparedQuery pq = datastore.prepare(participantQuery);
+			Entity participantEntity = pq.asSingleEntity();
+			String participantEmail = (String) participantEntity.getProperty("ParticipantEmail");
+			email.add(participantEmail);
+		}
+		return email;
+	}
+
 	public List<Event> retrieveEventByEmail(String email) throws EntityNotFoundException, ParseException {
-		Query participantQuery=new Query("Participant");
-		Filter participantIDFilter=new Query.FilterPredicate("ParticipantEmail",FilterOperator.EQUAL,email);
+		Query participantQuery = new Query("Participant");
+		Filter participantIDFilter = new Query.FilterPredicate("ParticipantEmail", FilterOperator.EQUAL, email);
 		participantQuery.setFilter(participantIDFilter);
-		PreparedQuery pq=datastore.prepare(participantQuery);
-		Entity participantEntity=pq.asSingleEntity();
-		String participantID=(String) participantEntity.getProperty("ParticipantID");
-		
+		PreparedQuery pq = datastore.prepare(participantQuery);
+		Entity participantEntity = pq.asSingleEntity();
+		String participantID = (String) participantEntity.getProperty("ParticipantID");
+
 		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
 		Query q = new Query("Event");
 		Filter filterEmail = new Query.FilterPredicate("ParticipantKey", FilterOperator.EQUAL, participantID);
 		q.setFilter(filterEmail);
 		q.addSort("EventID", SortDirection.ASCENDING);
 
-		 pq = datastore.prepare(q);
+		pq = datastore.prepare(q);
 		List<Event> events = new ArrayList<Event>();
 
-	//	Key participantKey = KeyFactory.createKey("Participant", email);
+		// Key participantKey = KeyFactory.createKey("Participant", email);
 //		Entity participant = datastore.get(participantKey);
 		String participantTimeZone = (String) participantEntity.getProperty("TimeZone");
 		TimeZone zoneID = TimeZone.getTimeZone(participantTimeZone);

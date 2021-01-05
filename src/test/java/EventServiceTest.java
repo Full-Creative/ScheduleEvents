@@ -54,7 +54,7 @@ public class EventServiceTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testAddParticipant() throws EntityNotFoundException {
+	public void testAddParticipant() throws EntityNotFoundException, DataBaseException {
 		ParticipantDetails participant = new ParticipantDetails();
 		participant.setEmail(null);
 		assertEquals(participant, eventService.addParticipant(participant));
@@ -62,7 +62,7 @@ public class EventServiceTest {
 	}
 
 	@Test(expected = IllegalArgumentException.class)
-	public void testAddParticipant2() throws EntityNotFoundException {
+	public void testAddParticipant2() throws EntityNotFoundException, DataBaseException {
 		assertEquals(null, eventService.addParticipant(null));
 	}
 

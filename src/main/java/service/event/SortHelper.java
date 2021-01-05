@@ -17,9 +17,9 @@ public class SortHelper {
 		List<Map.Entry<Long, Event>> list = new LinkedList<Map.Entry<Long, Event>>(events.entrySet());
 		Collections.sort(list, new Comparator<Map.Entry<Long, Event>>() {
 			public int compare(Map.Entry<Long, Event> o1, Map.Entry<Long, Event> o2) {
-				if(o1.getValue().getParticipantEmail() !=null && o2.getValue().getParticipantEmail()!=null)
-				return (Integer.valueOf(o1.getValue().getParticipantEmail().size()))
-						.compareTo(Integer.valueOf(o2.getValue().getParticipantEmail().size()));
+				if(o1.getValue().getParticipantKey() !=null && o2.getValue().getParticipantKey()!=null)
+				return (Integer.valueOf(o1.getValue().getParticipantKey().size()))
+						.compareTo(Integer.valueOf(o2.getValue().getParticipantKey().size()));
 				else return -1;
 			}
 		});
