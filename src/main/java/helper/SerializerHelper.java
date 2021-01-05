@@ -1,3 +1,4 @@
+package helper;
 
 
 import java.io.BufferedReader;
@@ -10,7 +11,7 @@ import model.ParticipantDetails;
 
 
 public class SerializerHelper {
-	protected String bufferedReaderToString(BufferedReader reader) throws IOException {
+	public String bufferedReaderToString(BufferedReader reader) throws IOException {
 		StringBuilder buffer = new StringBuilder();
 		String line;
 		while ((line = reader.readLine()) != null) {
@@ -19,17 +20,17 @@ public class SerializerHelper {
 		return buffer.toString();
 	}
 
-	protected Event bufferedReaderToJavaObject(BufferedReader reader) throws IOException,NumberFormatException {
+	public Event bufferedReaderToJavaObject(BufferedReader reader) throws IOException,NumberFormatException {
 		String javaString = bufferedReaderToString(reader);
 		Event data = new Gson().fromJson(javaString, Event.class);
 		return data;
 	}
-	protected ParticipantDetails bufferedReaderToParticipantObject(BufferedReader reader) throws IOException {
+	public ParticipantDetails bufferedReaderToParticipantObject(BufferedReader reader) throws IOException {
 		String javaString = bufferedReaderToString(reader);
 		ParticipantDetails data = new Gson().fromJson(javaString, ParticipantDetails.class);
 		return data;
 	}
-	protected String javaObjectToJson(Object data) {
+	public String javaObjectToJson(Object data) {
 		String jsonString = new String();
 		try {
 			jsonString = new Gson().toJson(data);
@@ -38,4 +39,8 @@ public class SerializerHelper {
 		}
 		return jsonString;
 	}
+	
+	public  < T >  T  propertyToObject(String data, Class<T> obj) {
+		return new Gson().fromJson(data, obj);
+	   }
 }

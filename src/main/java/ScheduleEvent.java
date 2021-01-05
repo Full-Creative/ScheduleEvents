@@ -9,8 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import service.event.EventServiceImp;
 import datastore.DataBaseException;
 import model.Event;
-
-import com.fasterxml.uuid.Generators;
+import helper.SerializerHelper;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 
 @WebServlet(name = "ScheduleEvent", urlPatterns = { "/event" })

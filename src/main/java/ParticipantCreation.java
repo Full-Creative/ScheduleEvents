@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 
 import datastore.DataBaseException;
+import helper.SerializerHelper;
 import model.Event;
 import model.ParticipantDetails;
 import service.participant.*;

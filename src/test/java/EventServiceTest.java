@@ -36,81 +36,34 @@ public class EventServiceTest {
 		assertEquals(null, eventService.addEvent(null));
 	}
 
-	@Test
-	public void testModifyEvent() {
-		try {
-			Event eventDetails = new Event();
-			eventDetails.setEventID(null);
-			assertEquals(eventDetails, eventService.modifyEvent(eventDetails));
-		} catch (IllegalArgumentException e) {
-			assertEquals("Exception message must be correct", "Invalid ID", e.getMessage());
-		} catch (EntityNotFoundException e) {
-			assertEquals("Exception message must be correct", "Event not found", e.getMessage());
-		} catch (DataBaseException e) {
-			assertEquals("Exception message must be correct", "Not modified", e.getMessage());
-		}
+	@Test(expected = IllegalArgumentException.class)
+	public void testModifyEvent() throws DataBaseException, EntityNotFoundException {
+		Event eventDetails = new Event();
+		eventDetails.setEventID(null);
+		assertEquals(eventDetails, eventService.modifyEvent(eventDetails));
 	}
 
-	public void testRemoveEvent() {
-		try {
-			eventService.removeEvent(null);
-		} catch (EntityNotFoundException e) {
-			assertEquals("Exception message must be correct", "Event not found", e.getMessage());
-		} catch (IllegalArgumentException e) {
-			assertEquals("Exception message must be correct", "Event not available", e.getMessage());
-		}
+	@Test(expected = IllegalArgumentException.class)
+	public void testRemoveEvent() throws EntityNotFoundException {
+		eventService.removeEvent(null);
 	}
 
-	@Test
-	public void testRetrieveById() {
-		try {
+	@Test(expected = IllegalArgumentException.class)
+	public void testRetrieveById() throws EntityNotFoundException {
 			assertEquals(new Event(), eventService.retrieveById(null));
-		} catch (EntityNotFoundException e) {
-			assertEquals("Exception message must be correct", "Event not found", e.getMessage());
-		} catch (IllegalArgumentException e) {
-			assertEquals("Exception message must be correct", "Invalid ID", e.getMessage());
-		}
-
 	}
 
-	@Test
-	public void testAddParticipant() {
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddParticipant() throws EntityNotFoundException {
 		ParticipantDetails participant = new ParticipantDetails();
 		participant.setEmail(null);
-		try {
-			assertEquals(participant, eventService.addParticipant(participant));
-		} catch (EntityNotFoundException e) {
-			assertEquals("Exception message must be correct", "Event not found", e.getMessage());
-		} catch (IllegalArgumentException e) {
-			assertEquals("Exception message must be correct", "Participant Details not available", e.getMessage());
-		}
+		assertEquals(participant, eventService.addParticipant(participant));
 
 	}
 
-	@Test
-	public void testAddParticipant1() {
-		ParticipantDetails participant = new ParticipantDetails();
-		participant.setName(null);
-		try {
-			assertEquals(participant, eventService.addParticipant(participant));
-		} catch (EntityNotFoundException e) {
-			assertEquals("Exception message must be correct", "Event not found", e.getMessage());
-		} catch (IllegalArgumentException e) {
-			assertEquals("Exception message must be correct", "Participant Details not available", e.getMessage());
-		}
-
-	}
-
-	@Test
-	public void testAddParticipant2() {
-		try {
-			assertEquals(null, eventService.addParticipant(null));
-		} catch (EntityNotFoundException e) {
-			assertEquals("Exception message must be correct", "Event not found", e.getMessage());
-		} catch (IllegalArgumentException e) {
-			assertEquals("Exception message must be correct", "Participant Details not available", e.getMessage());
-		}
-
+	@Test(expected = IllegalArgumentException.class)
+	public void testAddParticipant2() throws EntityNotFoundException {
+		assertEquals(null, eventService.addParticipant(null));
 	}
 
 	@Test(expected = IllegalArgumentException.class)
@@ -121,7 +74,7 @@ public class EventServiceTest {
 
 	@Test(expected = IllegalArgumentException.class)
 	public void testRetrieveByTimeRange1() {
-			assertEquals(null, eventService.retrieveByTimeRange(0, -1));
+		assertEquals(null, eventService.retrieveByTimeRange(0, -1));
 	}
 
 }

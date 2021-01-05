@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.datastore.EntityNotFoundException;
 
+import helper.SerializerHelper;
 import model.ParticipantDetails;
 import service.event.EventServiceImp;
 

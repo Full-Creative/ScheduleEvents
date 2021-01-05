@@ -23,16 +23,16 @@ public class HeaderFilter implements Filter {
 		HttpServletRequest httpRequest = (HttpServletRequest) req;
 		String val = httpRequest.getHeader("user");
 		
-	//	if( val!=null && val.equals("user"))
+		//if( val!=null && val.equals("user"))
 		{
 			System.out.println("In header filter");
 			chain.doFilter(req, resp);
 		}
-//		else
-//		{
-//			HttpServletResponse response = (HttpServletResponse) resp;
-//			response.sendError(404);
-//		}
+	//	else
+		{
+		//	HttpServletResponse response = (HttpServletResponse) resp;
+		//	response.sendError(404);
+		}
 	}
 
 	public void destroy() {

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.datastore.EntityNotFoundException;
 
+import helper.SerializerHelper;
 import model.Event;
 import service.event.EventServiceImp;
 
@@ -22,7 +23,6 @@ public class Events extends HttpServlet {
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
 		SerializerHelper serializer = new SerializerHelper();
 		String result = serializer.javaObjectToJson(eventService.sortEventCreatedTime());
 		response.setContentType("application/json");

@@ -12,7 +12,7 @@ import model.ParticipantDetails;
 import java.text.ParseException;
 import java.util.*;
 
-public class EventServiceImp  implements EventService {
+public class EventServiceImp implements EventService {
 	public EventsDB eventDB;
 
 	public EventServiceImp() {
@@ -21,8 +21,7 @@ public class EventServiceImp  implements EventService {
 
 	@Override
 	public Event addEvent(Event eventDetails) {
-		if (eventDetails == null || eventDetails.getEventTime() == 0
-				|| eventDetails.getEventDuration() == 0)
+		if (eventDetails == null || eventDetails.getEventTime() == 0 || eventDetails.getEventDuration() == 0)
 			throw new IllegalArgumentException("Event Details not available");
 		boolean isInserted = false;
 		try {
@@ -48,7 +47,7 @@ public class EventServiceImp  implements EventService {
 
 	@Override
 	public void removeEvent(String id) throws EntityNotFoundException {
-		if (retrieveById(id) == null)
+		if (retrieveById(id) == null || id == null)
 			throw new IllegalArgumentException("Event not available");
 		eventDB.deleteEvent(id);
 	}
@@ -80,9 +79,6 @@ public class EventServiceImp  implements EventService {
 		return event;
 	}
 
-	
-
-	
 	public List<Event> retrieveByDatesortByParticipantCount(String date) throws ParseException {
 		List<Event> events = eventDB.retrieveByDatesortByParticipantCount(date);
 		return events;

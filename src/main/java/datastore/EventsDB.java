@@ -33,13 +33,15 @@ import com.google.appengine.api.datastore.Query.FilterPredicate;
 import com.google.appengine.api.datastore.Query.SortDirection;
 import com.google.gson.Gson;
 import java.util.UUID;
+import helper.SerializerHelper;
 //import com.google.cloud.Date;
 
 public class EventsDB {
 	private DatastoreService datastore;
-
+	SerializerHelper serializer;
 	public EventsDB() {
 		datastore = DatastoreServiceFactory.getDatastoreService();
+		 serializer = new SerializerHelper();
 	}
 
 	public Event getEvent(String id) throws EntityNotFoundException {
@@ -74,7 +76,7 @@ public class EventsDB {
 		try {
 			Entity eventEntity = datastore.get(KeyFactory.createKey("Event", event.getEventID()));
 			if (eventEntity != null) {
-				if (event.getEventTitle() != null)
+				if (event.getEventTitle() != null || !event.getEventTitle().equals(""))
 					eventEntity.setProperty("EventTitle", event.getEventTitle());
 				if (event.getEventDuration() != 0)
 					eventEntity.setProperty("EventDuration", event.getEventDuration());
@@ -130,8 +132,9 @@ public class EventsDB {
 			q = new Query("Event").setFilter(event);
 			pq = datastore.prepare(q);
 			Entity eventEntity = pq.asSingleEntity();
-			if (eventEntity.getProperty("Email") != null) {
-				participantIDinEvent = new Gson().fromJson(eventEntity.getProperty("ParticipantID").toString(), List.class);
+			if ( eventEntity.getProperty("ParticipantKey")!=null) {			
+				participantIDinEvent= (List<String>) serializer.propertyToObject(eventEntity.getProperty("ParticipantKey").toString(), ArrayList.class);
+			//	participantIDinEvent = new Gson().fromJson(eventEntity.getProperty("ParticipantKey").toString(), List.class);
 			}
 
 			if (!participantIDinEvent.contains(participantID))
@@ -191,7 +194,8 @@ public class EventsDB {
 		event.setEventCreatedTime((long) entity.getProperty("EventCreatedTime"));
 		event.setEventTime((long) entity.getProperty("EventTime"));
 		if (entity.getProperty("ParticipantKey") != null) {
-			Set<String> ar = new Gson().fromJson(entity.getProperty("ParticipantKey").toString(), HashSet.class);
+		//	Set<String> ar = new Gson().fromJson(entity.getProperty("ParticipantKey").toString(), HashSet.class);
+			Set<String> ar= (Set<String>) serializer.propertyToObject(entity.getProperty("ParticipantKey").toString(), HashSet.class);
 			event.setParticipantEmail(ar);
 		}
 		return event;

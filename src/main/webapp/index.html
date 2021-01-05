@@ -4,30 +4,49 @@
 <meta http-equiv="content-type"
 	content="application/xhtml+xml; charset=UTF-8" />
 <title>EventScheduler</title>
-<style>
-table, th, td {
-	border: 1px solid black;
-}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 	<h1>Schedule Event!</h1>
 	<nav>
-	<a href="index.html">Home</a>
-	<a href="eventCreate.html">Create Event</a>
-	<a href="searchByMail.html">Search Event by mail</a>
-	<a href="searchByDate.html">Search Event by date</a>
+		<a href="index.html">Home</a> 
+		<a href="eventCreate.html">Create Event</a>
+		<a href="searchByMail.html">Search Event by mail</a>
+		<a	href="searchByDate.html">Search Event by date</a>
 	</nav>
 	<br>
 	<br>
-	
+
 	<table id="events"></table>
 	<br>
 	<br>
+
+	<!-- The Modal --
+	<div id="myModal" class="modal">
+
+		<!-- Modal content --
+		<div class="modal-content">
+			<span class="close">&times;</span>
+			<p>Some text in the Modal..</p>
+		</div>
+
+	</div>-->
+	<div id="myModal" class="modal">
+		<div class="modal-content">
+			<span class="close">&times;</span> 
+			Event Title: <input type="text"	id="eventTitle"></input> <br><br>
+			Event Duration: <select id="duration" name="duration"></select><!--<input type="text" id="eventDuration"></input>-->
+			<br><br>
+			Event Time: <input type="datetime-local" id="eventTime"></input><br><br>
+			<button type="button" id="update">Update</button>
+		</div>
+	</div>
 	<br>
-	<br><br>
-	
+	<br>
+	<br>
+
+	<script src="https://MomentJS.com/downloads/moment.js"></script> 
 	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 	<script src="myscript.js"></script>
 </body>
