@@ -10,14 +10,14 @@ $("table").on("click", ".delete", function() {
 });
 $("table").on("click", ".participant", function() {
 	var modal = document.getElementById("participantModal");
-	var addParticipant=document.getElementById("participantAddition");
-	
+	var addParticipant = document.getElementById("participantAddition");
+
 	var span = document.getElementsByClassName("close")[1];
-	
+
 	var addBtn = document.getElementById("addParticipant");
 	var eventID = this.id;
-	
-	addParticipant.style.display="none";
+
+	addParticipant.style.display = "none";
 	modal.style.display = "block";
 	// When the user clicks on <span> (x), close the modal
 	span.onclick = function() {
@@ -55,6 +55,7 @@ $("table").on("click", ".updateBtn", function() {
 	updateBtn.onclick = function() {
 		updateEvent(eventID);
 	}
+	populateDropDown();
 	populateForm(this);
 	//this.parentElement.parentElement.setAttribute('contenteditable', true);
 
@@ -69,10 +70,7 @@ function populateForm(e) {
 	document.getElementById('duration').selectedIndex = e.parentElement.parentElement.cells[2].innerText / 15 - 1;
 };
 function getEventsByDate() {
-
-	console.log(moment(new Date($('#eventDate').val())).format('DD/MM/YYYY'));
 	var date = moment(new Date($('#eventDate').val())).format('DD/MM/YYYY');
-	alert(date);
 	$.ajax({
 		type: "GET",
 		url: "EventDate?date=" + date,
@@ -99,7 +97,10 @@ function getEventsByMail() {
 		type: "GET",
 		url: "ParticipantEvent?email=" + document.getElementById("email").value,
 		contentType: "application/json",
-		success: printParticipantEvents
+		success: printParticipantEvents,
+		error: function(jqXHR, textStatus, errorThrown) {
+			console.log(jqXHR,textStatus, errorThrown);
+		}
 	});
 };
 
@@ -157,16 +158,16 @@ function addEventParticipant(eventID) {
 			getEvents();
 		},
 		error: function(xhr, status, error) {
-			alert(error);
-			var addParticipantDiv=document.getElementById("participantAddition");
-			addParticipantDiv.style.display="block";
+			alert("Participant does not exist. Please Create new participant.");
+			var addParticipantDiv = document.getElementById("participantAddition");
+			addParticipantDiv.style.display = "block";
 		}
 	});
 };
 
-function clearResponse(){
-	document.getElementById('email').value='';
-	document.getElementById('name').value='';
+function clearResponse() {
+	document.getElementById('email').value = '';
+	document.getElementById('name').value = '';
 }
 function printParticipantEvents(response) {
 	var result = '<tr><td>Event Title</td><td>Event Duration</td><td>Event Start Time</td><td>Event Created Time</td><td>Participant Email</td></tr>';
@@ -184,7 +185,7 @@ function printParticipantEvents(response) {
 
 }
 function printEvents(response) {
-	var result = '<tr><td>Event Title</td><td>Event Duration in minutes</td><td>Event Start Time</td><td>Event Created Time</td><td>Email</td><td>Participant Key</td><td>Update</td><td>Select</td><td></td></tr>';
+	var result = '<tr><td>Event Title</td><td>Event Duration in minutes</td><td>Event Start Time</td><td>Event Created Time</td><td>Email</td><td>Update</td><td>Select</td><td></td></tr>';
 	for (var i = 0; i < response.length; i++) {
 		result += ('<tr>' +
 			'<td style="display:none">' + response[i].eventID + '</td>' +
@@ -195,7 +196,7 @@ function printEvents(response) {
 
 			'<td>' + new Date(response[i].eventCreatedTime).toUTCString() + '<br><br>' + new Date(response[i].eventCreatedTime).toLocaleString() + '</td>' +
 			'<td>' + ((response[i].participantEmail != null) ? response[i].participantEmail : 'no participant') + '</td>' +
-			'<td>' + ((response[i].participantKey != null) ? response[i].participantKey : 'no participant') + '</td>' +
+		//	'<td>' + ((response[i].participantKey != null) ? response[i].participantKey : 'no participant') + '</td>' +
 
 			//	'<td>' + '<input type="radio" id=' + response[i].eventID + ' name="radioChoose"></input>' + '</td>'
 			'<td><button class="updateBtn">Update</button></td>' +
@@ -248,6 +249,9 @@ function init() {
 	$('#postEvent').click(function() {
 		submitEvent();
 	});
+	$('#duration').click(function() {
+		populateDropDown();
+	});
 	$('#date').click(function() {
 		submit();
 	});
@@ -257,6 +261,11 @@ function init() {
 	$('#getEventsByDate').click(function() {
 		getEventsByDate();
 	});
+
+};
+
+
+function populateDropDown() {
 	for (var i = 15; i <= 120; i = i + 15) {
 		var option = document.createElement("option");
 
@@ -266,8 +275,5 @@ function init() {
 		var select = document.getElementById("duration");
 		select.appendChild(option);
 	}
-};
-
-
-
+}
 

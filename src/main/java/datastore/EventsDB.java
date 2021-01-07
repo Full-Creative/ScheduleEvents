@@ -315,20 +315,21 @@ public class EventsDB {
 	}
 
 	public List<Event> retrieveEventByEmail(String email) throws EntityNotFoundException, ParseException {
+	//Filter to get participant row of given email
 		Query participantQuery = new Query("Participant");
-		Filter participantIDFilter = new Query.FilterPredicate("ParticipantEmail", FilterOperator.EQUAL, email);
-		participantQuery.setFilter(participantIDFilter);
+		Filter participantEmailFilter = new Query.FilterPredicate("ParticipantEmail", FilterOperator.EQUAL, email);
+		participantQuery.setFilter(participantEmailFilter);
 		PreparedQuery pq = datastore.prepare(participantQuery);
-		Entity participantEntity = pq.asSingleEntity();
+		Entity participantEntity = pq.asSingleEntity(); 
+				
 		String participantID = (String) participantEntity.getProperty("ParticipantID");
 
-		DatastoreService datastore = DatastoreServiceFactory.getDatastoreService();
-		Query q = new Query("Event");
-		Filter filterEmail = new Query.FilterPredicate("ParticipantKey", FilterOperator.EQUAL, participantID);
-		q.setFilter(filterEmail);
-		q.addSort("EventID", SortDirection.ASCENDING);
+		Query eventQuery = new Query("Event");
+		Filter participantIDFilter = new Query.FilterPredicate("ParticipantKey", FilterOperator.EQUAL, participantID);
+		eventQuery.setFilter(participantIDFilter);
+		//eventQuery.addSort("EventID", SortDirection.ASCENDING);
 
-		pq = datastore.prepare(q);
+		pq = datastore.prepare(eventQuery);
 		List<Event> events = new ArrayList<Event>();
 
 		// Key participantKey = KeyFactory.createKey("Participant", email);
@@ -338,7 +339,7 @@ public class EventsDB {
 
 		for (Entity e : pq.asList(FetchOptions.Builder.withDefaults())) {
 			Event event = getEvent(e.getProperty("EventID").toString());
-			if (participantTimeZone != null) {
+			/*if (participantTimeZone != null) {
 				Calendar convertedTime = Calendar.getInstance();
 
 				SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy HH:mm:ss");
@@ -354,7 +355,7 @@ public class EventsDB {
 				event.setEventCreatedTime(convertedTime.getTimeInMillis());
 
 				System.out.println(res);
-			}
+			}*/
 			events.add(event);
 		}
 		if (events.size() == 0)
