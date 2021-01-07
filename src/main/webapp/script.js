@@ -1,66 +1,32 @@
-$(document).ready(function() {
-	$("#getEvents").click(function() {
-		getEvents();
-	});
-	$("#getEventsByMail").click(function() {
-		getEventsByMail();
-	});
-
-});
-
-function getEvents() {
-	$.ajax({
-		type: "GET",
-		url: "Events",
-		contentType: "application/json",
-		//data: JSON.stringify(obj),
-		success: function(response) {
-			printEvents(response);
-		}
-
-	});
-};
-function getEventsByMail() {
-	$.ajax({
-		type: "GET",
-		url: "ParticipantEvent?email="+document.getElementById("email").value,
-		contentType: "application/json",
-		//data: JSON.stringify(obj),
-		success: function(response) {
-			printParticipantEvents(response);
-		}
-
-	});
-};
-function printEvents(response) {
-
-	var result = '<tr><td>Event ID</td><td>Event Title</td><td>Event Duration</td><td>Event Start Time</td><td>Event Created Time</td><td>Participant Email</td></tr>';
-	for (var i = 0; i < response.length; i++) {
-		result += ('<tr>' +
-			'<td>' + response[i].eventID + '</td>' +
-			'<td>' + response[i].eventTitle + '</td>' +
-			'<td>' + response[i].eventDuration + '  ' + response[i].eventDuration / 3600000 + 'hour</td>' +
-			'<td>' + response[i].eventTime + '<br>' + new Date(response[i].eventTime).toUTCString() +'<br>'+new Date(response[i].eventTime).toLocaleString()+ '</td>' +
-			'<td>' + response[i].eventCreatedTime + '<br>' + new Date(response[i].eventCreatedTime).toUTCString() +'<br>'+new Date(response[i].eventCreatedTime).toLocaleString()+ '</td>' +
-			'<td>' + response[i].participantEmail + '</td>'
-			+ '</tr>');
-	}
-	$('#events').html(result);
-
+var add=(x,y)=>{
+	console.log(x+y);
 }
-function printParticipantEvents(response) {
 
-	var result = '<tr><td>Event ID</td><td>Event Title</td><td>Event Duration</td><td>Event Start Time</td><td>Event Created Time</td><td>Participant Email</td></tr>';
-	for (var i = 0; i < response.length; i++) {
-		result += ('<tr>' +
-			'<td>' + response[i].eventID + '</td>' +
-			'<td>' + response[i].eventTitle + '</td>' +
-			'<td>' + response[i].eventDuration + '  ' + response[i].eventDuration / 3600000 + 'hour</td>' +
-			'<td>' + response[i].eventTime + '<br>' + new Date(response[i].eventTime).toUTCString() +'<br>'+new Date(response[i].eventTime).toLocaleString()+ '</td>' +
-			'<td>' + response[i].eventCreatedTime + '<br>' + new Date(response[i].eventCreatedTime).toUTCString() +'<br>'+new Date(response[i].eventCreatedTime).toLocaleString()+ '</td>' +
-			'<td>' + response[i].participantEmail + '</td>'
-			+ '</tr>');
-	}
-	$('#events').html(result);
-
+var add=(x,y)=>{
+	console.log(x+y);
 }
+add(2,3);
+//5
+var add=(x,x)=>{
+	console.log(x+x);
+}
+// Uncaught SyntaxError: Duplicate parameter name not allowed in this context
+
+function add(x,x){console.log(x+x);}
+add(4,6);
+//12
+new add(3,4);
+//8
+
+function mul(x,y){console.log(x*y);}
+mul(2,3);
+//6
+
+new mul(10,10);
+// 100
+
+var mul=(x,y)=>{console.log(x*y);}
+mul(2,3);
+// 6
+new mul(10,10);
+// Uncaught TypeError: mul is not a constructor  at <anonymous>:1:1

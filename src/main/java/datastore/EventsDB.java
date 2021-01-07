@@ -102,12 +102,13 @@ public class EventsDB {
 	}
 
 	public boolean createParticipant(ParticipantDetails participant) {
+		if(participant.getName() == null || participant.getName().equals("") || participant.getTimeZone() == null || participant.getTimeZone().equals(""))
+			return false;
 		String id = Generators.timeBasedGenerator().generate().toString();
 		Key key = KeyFactory.createKey("Participant", id);
 
 		Entity participantEntity = new Entity(key);
 		participantEntity.setProperty("ParticipantID", id);
-
 		participantEntity.setProperty("ParticipantName", participant.getName());
 		participantEntity.setProperty("ParticipantEmail", participant.getEmail());
 		participantEntity.setProperty("TimeZone", participant.getTimeZone());
@@ -134,7 +135,7 @@ public class EventsDB {
 			q = new Query("Event").setFilter(event);
 			pq = datastore.prepare(q);
 			Entity eventEntity = pq.asSingleEntity();
-			if (eventEntity.getProperty("ParticipantKey") != null && eventEntity.getProperty("Email") != null) {
+			if (eventEntity.getProperty("ParticipantKey") != null) {
 				participantIDinEvent = (List<String>) serializer.propertyToObject(eventEntity.getProperty("ParticipantKey").toString(), ArrayList.class);
 
 				// participantIDinEvent = new
@@ -148,9 +149,12 @@ public class EventsDB {
 			datastore.put(eventEntity);
 
 		} catch (EntityNotFoundException e) {
-			return false;
-			// createParticipant(participant);
-			// addParticipant(participant);
+			
+			boolean isCreated= createParticipant(participant);
+			if(isCreated)
+			addParticipant(participant);
+			else 
+				return false;
 			// e.printStackTrace();
 		}
 		return true;

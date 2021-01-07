@@ -46,9 +46,15 @@
 	<div id="participantModal" class="modal">
 		<div class="modal-content">
 			<span class="close">&times;</span> 
-			<!-- Participant Name: <input type="text" id="name"></input> <br><br>-->
-			Participant Email: <input type="text" id="email"></input> <br><br>		
-		<!-- Participant Time Zone: <select id="timezone" name="timezone"></select>--><br><br>
+			 <div id="participantAddition">
+			 Participant Name: <input type="text" id="name"></input> <br><br>
+			 Participant Time Zone: 
+			 <select id="timezone" name="timezone">
+			 	<option value="Asia/Kolkata">Asia/Kolkata</option>
+  				<option value="Asia/Singapore">Asia/Singapore</option>
+ 			 </select><br><br>
+			 </div>
+			 Participant Email: <input type="text" id="email"></input> <br><br>			   
 			<button type="button" id="addParticipant">Add</button>
 		</div>
 	</div>

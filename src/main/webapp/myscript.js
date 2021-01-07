@@ -10,9 +10,14 @@ $("table").on("click", ".delete", function() {
 });
 $("table").on("click", ".participant", function() {
 	var modal = document.getElementById("participantModal");
+	var addParticipant=document.getElementById("participantAddition");
+	
 	var span = document.getElementsByClassName("close")[1];
+	
 	var addBtn = document.getElementById("addParticipant");
 	var eventID = this.id;
+	
+	addParticipant.style.display="none";
 	modal.style.display = "block";
 	// When the user clicks on <span> (x), close the modal
 	span.onclick = function() {
@@ -136,7 +141,9 @@ function deleteEvent(eventID) {
 function addEventParticipant(eventID) {
 	var obj = {
 		'eventID': eventID,
-		'email': $('#email').val()
+		'email': $('#email').val(),
+		'name': $('#name').val(),
+		'timeZone': $('#timezone').val()
 	};
 	//	var id = $('input[type=radio][name=radioChoose]:checked').attr('id');
 	$.ajax({
@@ -146,14 +153,21 @@ function addEventParticipant(eventID) {
 		data: JSON.stringify(obj),
 		success: function(response) {
 			alert(response);
+			clearResponse();
 			getEvents();
 		},
 		error: function(xhr, status, error) {
 			alert(error);
+			var addParticipantDiv=document.getElementById("participantAddition");
+			addParticipantDiv.style.display="block";
 		}
 	});
 };
 
+function clearResponse(){
+	document.getElementById('email').value='';
+	document.getElementById('name').value='';
+}
 function printParticipantEvents(response) {
 	var result = '<tr><td>Event Title</td><td>Event Duration</td><td>Event Start Time</td><td>Event Created Time</td><td>Participant Email</td></tr>';
 	for (var i = 0; i < response.length; i++) {
