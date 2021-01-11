@@ -327,7 +327,7 @@ public class EventsDB {
 		Query eventQuery = new Query("Event");
 		Filter participantIDFilter = new Query.FilterPredicate("ParticipantKey", FilterOperator.EQUAL, participantID);
 		eventQuery.setFilter(participantIDFilter);
-		//eventQuery.addSort("EventID", SortDirection.ASCENDING);
+	//	eventQuery.addSort("EventID", SortDirection.ASCENDING);
 
 		pq = datastore.prepare(eventQuery);
 		List<Event> events = new ArrayList<Event>();
