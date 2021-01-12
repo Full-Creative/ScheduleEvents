@@ -2,12 +2,13 @@
 $(document).ready(function() {
 	var ajaxCall = ajaxCalls();
 	ajaxCall.getEvents();
-	init(ajaxCall);
+	initializeClick(ajaxCall);
 
 });
 
 
 var ajaxCalls = function() {
+	var show = print();
 
 	function getEvents() {
 		$.ajax({
@@ -20,7 +21,7 @@ var ajaxCalls = function() {
 			complete: function() {
 				$("#loading").hide();
 			},
-			success: printEvents,
+			success: show.printEvents,
 			error: function(jqXHR, textStatus, errorThrown) {
 				console.log(textStatus, errorThrown);
 			}
@@ -34,7 +35,7 @@ var ajaxCalls = function() {
 				type: "GET",
 				url: "ParticipantEvent?email=" + email,
 				contentType: "application/json",
-				success: printParticipantEvents,
+				success: show.printParticipantEvents,
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.log(jqXHR, textStatus, errorThrown);
 				}
@@ -53,19 +54,19 @@ var ajaxCalls = function() {
 				url: "TimeRange?start=" + start + "&end=" + end,
 				contentType: "application/json",
 				//	data: JSON.stringify(obj),
-				success: printParticipantEvents
+				success: show.printParticipantEvents
 			});
 		else
 			alert('Please select the dates');
 	}
 
 	function getEventsByDate(date) {
-		if (!isNaN(date))
+		if (date)
 			$.ajax({
 				type: "GET",
 				url: "EventDate?date=" + moment(date).format('DD/MM/YYYY'),
 				contentType: "application/json",
-				success: printParticipantEvents
+				success: show.printParticipantEvents
 			});
 		else
 			alert('Please select a date');
@@ -92,10 +93,9 @@ var ajaxCalls = function() {
 	}
 
 	function deleteEvent(eventID) {
-		var id = eventID;
 		$.ajax({
 			type: "DELETE",
-			url: "event?id=" + id,
+			url: "event?id=" + eventID,
 			contentType: "application/json",
 			success: function(response) {
 				alert(response);
@@ -143,7 +143,7 @@ var ajaxCalls = function() {
 				data: JSON.stringify(obj),
 				success: function(response) {
 					alert(response);
-					clearResponse();
+					show.clearResponse();
 					getEvents();
 				},
 				error: function(xhr, status, error) {
@@ -169,70 +169,66 @@ var ajaxCalls = function() {
 	}
 }
 
+var print = function() {
+	function printEvents(response) {
+		var result = '<tr><td>Event Title</td><td>Event Duration in minutes</td><td>Event Start Time</td><td>Event Created Time</td><td>Email</td><td>Update</td><td>Select</td><td></td></tr>';
+		for (var i = 0; i < response.length; i++) {
+			result += ('<tr>' +
+				'<td style="display:none">' + response[i].eventID + '</td>' +
+				'<td>' + response[i].eventTitle + '</td>' +
+				'<td>' + response[i].eventDuration / 60000 + '</td>' +
+				'<td style="display:none">' + response[i].eventTime + '<!--<br>' + new Date(response[i].eventTime).toUTCString() + '<br>' + new Date(response[i].eventTime).toLocaleString() + '--></td>' +
+				'<td>' + new Date(response[i].eventTime).toUTCString() + '<br><br>' + new Date(response[i].eventTime).toLocaleString() + '</td>' +
 
+				'<td>' + new Date(response[i].eventCreatedTime).toUTCString() + '<br><br>' + new Date(response[i].eventCreatedTime).toLocaleString() + '</td>' +
+				'<td>' + ((response[i].participantEmail != null) ? response[i].participantEmail : 'no participant') + '</td>' +
+				//	'<td>' + ((response[i].participantKey != null) ? response[i].participantKey : 'no participant') + '</td>' +
 
+				//	'<td>' + '<input type="radio" id=' + response[i].eventID + ' name="radioChoose"></input>' + '</td>'
+				'<td><button class="updateBtn">Update</button></td>' +
+				//'<td>' + '<button type="button" id=' + response[i].eventID + ' class="update">Update</button>' + '</td>' +
 
-function populateForm(e) {
-	document.getElementById('eventTitle').value = e.parentElement.parentElement.cells[1].innerText;
-	var d = parseInt(e.parentElement.parentElement.cells[3].innerText);
-	document.getElementById('eventTime').value = moment(d).format('YYYY-MM-DDTHH:mm'); //yyyy-MM-ddThh:mm
-	//document.getElementById('eventDuration').value = e.parentElement.parentElement.cells[2].innerText;
-	// $("#duration").val(e.parentElement.parentElement.cells[2].innerText).attr("selected","selected");
-	document.getElementById('duration').selectedIndex = e.parentElement.parentElement.cells[2].innerText / 15 - 1;
-};
+				'<td>' + '<button type="button" id=' + response[i].eventID + ' class="delete">Delete</button>' + '</td>' +
+				'<td>' + '<button type="button" id=' + response[i].eventID + ' class="participant">Add participant</button>' + '</td>'
 
+				+ '</tr>');
+		}
 
-function clearResponse() {
-	document.getElementById('email').value = '';
-	document.getElementById('name').value = '';
-}
+		$('#events').html(result);
 
-function printParticipantEvents(response) {
-	var result = '<tr><td>Event Title</td><td>Event Duration</td><td>Event Start Time</td><td>Event Created Time</td><td>Participant Email</td></tr>';
-	for (var i = 0; i < response.length; i++) {
-		result += ('<tr>' +
-			'<td>' + response[i].eventTitle + '</td>' +
-			'<td>' + response[i].eventDuration / 60000 + 'min</td>' +
-			'<td>' + new Date(response[i].eventTime).toUTCString() + '<br><br>' + new Date(response[i].eventTime).toLocaleString() + '</td>' +
-			'<td>' + new Date(response[i].eventCreatedTime).toUTCString() + '<br><br>' + new Date(response[i].eventCreatedTime).toLocaleString() + '</td>' +
-			'<td>' + ((response[i].participantEmail != null) ? response[i].participantEmail : 'no participant') + '</td>' +
-			+ '</tr>');
 	}
 
-	$('#participantEvent').html(result);
-
-}
-
-function printEvents(response) {
-	var result = '<tr><td>Event Title</td><td>Event Duration in minutes</td><td>Event Start Time</td><td>Event Created Time</td><td>Email</td><td>Update</td><td>Select</td><td></td></tr>';
-	for (var i = 0; i < response.length; i++) {
-		result += ('<tr>' +
-			'<td style="display:none">' + response[i].eventID + '</td>' +
-			'<td>' + response[i].eventTitle + '</td>' +
-			'<td>' + response[i].eventDuration / 60000 + '</td>' +
-			'<td style="display:none">' + response[i].eventTime + '<!--<br>' + new Date(response[i].eventTime).toUTCString() + '<br>' + new Date(response[i].eventTime).toLocaleString() + '--></td>' +
-			'<td>' + new Date(response[i].eventTime).toUTCString() + '<br><br>' + new Date(response[i].eventTime).toLocaleString() + '</td>' +
-
-			'<td>' + new Date(response[i].eventCreatedTime).toUTCString() + '<br><br>' + new Date(response[i].eventCreatedTime).toLocaleString() + '</td>' +
-			'<td>' + ((response[i].participantEmail != null) ? response[i].participantEmail : 'no participant') + '</td>' +
-			//	'<td>' + ((response[i].participantKey != null) ? response[i].participantKey : 'no participant') + '</td>' +
-
-			//	'<td>' + '<input type="radio" id=' + response[i].eventID + ' name="radioChoose"></input>' + '</td>'
-			'<td><button class="updateBtn">Update</button></td>' +
-			//'<td>' + '<button type="button" id=' + response[i].eventID + ' class="update">Update</button>' + '</td>' +
-
-			'<td>' + '<button type="button" id=' + response[i].eventID + ' class="delete">Delete</button>' + '</td>' +
-			'<td>' + '<button type="button" id=' + response[i].eventID + ' class="participant">Add participant</button>' + '</td>'
-
-			+ '</tr>');
+	function clearResponse() {
+		document.getElementById('email').value = '';
+		document.getElementById('name').value = '';
 	}
 
-	$('#events').html(result);
+	function printParticipantEvents(response) {
+		var result = '<tr><td>Event Title</td><td>Event Duration</td><td>Event Start Time</td><td>Event Created Time</td><td>Participant Email</td></tr>';
+		for (var i = 0; i < response.length; i++) {
+			result += ('<tr>' +
+				'<td>' + response[i].eventTitle + '</td>' +
+				'<td>' + response[i].eventDuration / 60000 + 'min</td>' +
+				'<td>' + new Date(response[i].eventTime).toUTCString() + '<br><br>' + new Date(response[i].eventTime).toLocaleString() + '</td>' +
+				'<td>' + new Date(response[i].eventCreatedTime).toUTCString() + '<br><br>' + new Date(response[i].eventCreatedTime).toLocaleString() + '</td>' +
+				'<td>' + ((response[i].participantEmail != null) ? response[i].participantEmail : 'no participant') + '</td>' +
+				+ '</tr>');
+		}
+
+		$('#participantEvent').html(result);
+
+	}
+	return {
+
+		printEvents: printEvents,
+		clearResponse: clearResponse,
+		printParticipantEvents: printParticipantEvents
+	}
 
 }
 
 
-function init(ajaxCall) {
+function initializeClick(ajaxCall) {
 
 	$('#getEventsByMail').click(function() {
 		ajaxCall.eventsByMail(document.getElementById("email").value);
@@ -250,7 +246,7 @@ function init(ajaxCall) {
 		//getEventsByTimeRange();
 	});
 	$('#getEventsByDate').click(function() {
-		ajaxCall.getEventsByDate(new Date($('#eventDate').val()));
+		ajaxCall.getEventsByDate(new Date($('#eventDate').val()).getTime());
 	});
 
 	$("table").on("click", ".delete", function() {
@@ -317,19 +313,27 @@ function init(ajaxCall) {
 		//this.parentElement.parentElement.setAttribute('contenteditable', true);
 
 	});
+	function populateDropDown() {
+		for (var i = 15; i <= 120; i = i + 15) {
+			var option = document.createElement("option");
 
+			option.text = i;
+			option.value = i;
+
+			var select = document.getElementById("duration");
+			select.appendChild(option);
+		}
+	}
+	function populateForm(e) {
+		document.getElementById('eventTitle').value = e.parentElement.parentElement.cells[1].innerText;
+		var d = parseInt(e.parentElement.parentElement.cells[3].innerText);
+		document.getElementById('eventTime').value = moment(d).format('YYYY-MM-DDTHH:mm'); //yyyy-MM-ddThh:mm
+		//document.getElementById('eventDuration').value = e.parentElement.parentElement.cells[2].innerText;
+		// $("#duration").val(e.parentElement.parentElement.cells[2].innerText).attr("selected","selected");
+		document.getElementById('duration').selectedIndex = e.parentElement.parentElement.cells[2].innerText / 15 - 1;
+	};
 };
 
 
-function populateDropDown() {
-	for (var i = 15; i <= 120; i = i + 15) {
-		var option = document.createElement("option");
 
-		option.text = i;
-		option.value = i;
-
-		var select = document.getElementById("duration");
-		select.appendChild(option);
-	}
-}
 
