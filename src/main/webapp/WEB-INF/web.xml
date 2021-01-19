@@ -13,7 +13,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>CronServlet</servlet-name>
-		<url-pattern>/cron/gaejcronjob</url-pattern>
+		<url-pattern>/cron/aw</url-pattern>
 	</servlet-mapping>
 	<!-- <filter> <filter-name>logging</filter-name> <filter-class>FilterLog</filter-class> 
 		</filter> <filter-mapping> <filter-name>logging</filter-name> <url-pattern>/events</url-pattern> 

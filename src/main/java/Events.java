@@ -18,8 +18,7 @@ import service.event.EventServiceImp;
 @WebServlet("/events")
 public class Events extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	Event eventDetails = new Event();
-	EventServiceImp eventService = new EventServiceImp();
+	EventServiceImp eventService= new EventServiceImp();
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
